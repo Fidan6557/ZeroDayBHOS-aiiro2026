@@ -2,13 +2,16 @@ from pathlib import Path
 
 
 def get_data_dir() -> Path:
-    candidates = [
-        Path("/app/sample-data"),
-        Path(__file__).resolve().parents[2] / "data",
-        Path(__file__).resolve().parents[3] / "data",
-        Path(__file__).resolve().parents[4] / "data",
-    ]
-    for path in candidates:
-        if path.exists():
-            return path
-    return Path("/app/sample-data")
+    docker_path = Path("/app/sample-data")
+    if docker_path.exists():
+        return docker_path
+
+    here = Path(__file__).resolve()
+    for i in range(2, 6):
+        if i >= len(here.parents):
+            continue
+        candidate = here.parents[i] / "data"
+        if candidate.exists():
+            return candidate
+
+    return docker_path
