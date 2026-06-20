@@ -7,7 +7,9 @@ AgentShield
 ZeroDayBHOS
 
 ## Seçilmiş çağırış:
-AI Agent Security / Prompt Injection Protection
+Tapşırıq 1: Ağıllı şəhər sistemləri üçün Sİ əsaslı kibertəhlükə aşkarlanması
+
+AgentShield ağıllı şəhərin rəqəmsal xidmətlərində istifadə olunan Sİ agentlərinə daxil olan məzmunu analiz edir, şübhəli fəaliyyətləri aşkarlayır, mümkün təhlükələri təsnif edir və risk balı təqdim edir.
 
 ## Problem:
 AI agents (OpenClaw, OpenAI Agents, Claude agents) process external content as instructions. Attackers exploit this via prompt injection in emails, documents, chat messages, and RAG knowledge bases — leading to data exfiltration and tool abuse.
