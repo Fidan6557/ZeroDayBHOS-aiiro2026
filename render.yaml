@@ -1,0 +1,49 @@
+# Render Blueprint — AgentShield MVP
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deploy: Dashboard → New → Blueprint → connect GitHub repo
+# Or: render deploy
+#
+# After first deploy set GROQ_API_KEY in Render dashboard (agentshield-api → Environment)
+
+services:
+  - type: web
+    name: agentshield-api
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./src/backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////app/data/agentshield.db
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_API_URL
+        value: https://api.groq.com/openai/v1/chat/completions
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: CORS_ORIGINS
+        fromService:
+          type: web
+          name: agentshield-web
+          property: host
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+
+  - type: web
+    name: agentshield-web
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./src/frontend/Dockerfile
+    dockerContext: ./src/frontend
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: agentshield-api
+          property: host
+      - key: NODE_VERSION
+        value: "20"

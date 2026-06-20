@@ -21,7 +21,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="AgentShield API", version="1.0.0", lifespan=lifespan)
 
-origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+origins = []
+for o in settings.cors_origins.split(","):
+    o = o.strip()
+    if not o:
+        continue
+    if not o.startswith("http"):
+        o = f"https://{o}"
+    origins.append(o)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins or ["*"],

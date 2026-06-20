@@ -1,6 +1,12 @@
 const path = require("path");
 
-const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+function normalizeUrl(value) {
+  if (!value) return "http://127.0.0.1:8000";
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  return `https://${value}`;
+}
+
+const backendUrl = normalizeUrl(process.env.BACKEND_URL);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
