@@ -1,0 +1,22 @@
+[
+  {
+    "id": "normal-email",
+    "content": "Hi team, please review the Q3 sales report attached. Let me know if you have any questions about the numbers.",
+    "source_type": "email"
+  },
+  {
+    "id": "support-ticket",
+    "content": "Customer reports login issue on mobile app. Steps to reproduce: open app, tap sign in, error appears. Please investigate.",
+    "source_type": "support_ticket"
+  },
+  {
+    "id": "slack-update",
+    "content": "Standup reminder: tomorrow at 10am. Please update your Jira tickets before the meeting.",
+    "source_type": "slack"
+  },
+  {
+    "id": "doc-summary",
+    "content": "This document describes our product API endpoints. GET /users returns user list. POST /orders creates a new order.",
+    "source_type": "docx"
+  }
+]

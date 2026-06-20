@@ -1,0 +1,9 @@
+id,name,source_type,category,risk_expected
+telegram-injection,Telegram Prompt Injection,telegram,prompt_injection,high
+email-exfil,Email Data Exfiltration,email,data_exfiltration,high
+pdf-hidden,PDF Hidden Instructions,pdf,indirect_injection,high
+slack-phishing,Slack AI Phishing,slack,ai_phishing,high
+jailbreak,Jailbreak Attempt,web,jailbreak,high
+tool-abuse,Tool Abuse Chain,discord,tool_abuse,high
+normal-email,Normal Email,email,safe,low
+support-ticket,Support Ticket,support_ticket,safe,low
