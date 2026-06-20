@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./src/backend
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - sqlite_data:/app/data
+      - ./data:/app/sample-data:ro
+    environment:
+      DATABASE_URL: sqlite:////app/data/agentshield.db
+
+  frontend:
+    build:
+      context: ./src/frontend
+      args:
+        NEXT_PUBLIC_API_URL: ""
+        BACKEND_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:8000
+
+volumes:
+  sqlite_data:
