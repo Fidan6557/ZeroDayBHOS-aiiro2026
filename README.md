@@ -4,7 +4,7 @@
 AgentShield
 
 ## Komanda adı:
-[Your Team Name]
+ZeroDayBHOS
 
 ## Seçilmiş çağırış:
 AI Agent Security / Prompt Injection Protection
