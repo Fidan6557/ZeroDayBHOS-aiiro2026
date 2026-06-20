@@ -2,8 +2,15 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT_DIR = Path(__file__).resolve().parents[3]
-ENV_FILES = [str(ROOT_DIR / ".env"), ".env"]
+
+def _env_files() -> list[str]:
+    files: list[str] = []
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / ".env"
+        if candidate.exists():
+            files.append(str(candidate))
+    files.append(".env")
+    return files
 
 
 class Settings(BaseSettings):
@@ -18,7 +25,7 @@ class Settings(BaseSettings):
     url_max_bytes: int = 1048576
 
     model_config = SettingsConfigDict(
-        env_file=ENV_FILES,
+        env_file=_env_files(),
         env_file_encoding="utf-8",
         extra="ignore",
     )
