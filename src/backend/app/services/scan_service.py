@@ -1,10 +1,11 @@
 import hashlib
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
-from app.models.scan import Scan
+from app.engine.risk_engine import threat_level_for_score
+from app.models.scan import Notification, Scan
 from app.schemas.scan import ScanResponse
 
 
@@ -28,11 +29,23 @@ def save_scan(
         sanitized_content=result.sanitized_content,
         original_preview=result.original_preview,
         blocked=result.blocked,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(UTC).replace(tzinfo=None),
     )
     db.add(scan)
     db.commit()
     db.refresh(scan)
+    if result.risk_score > 30:
+        notification = Notification(
+            scan_id=scan.id,
+            title=f"{result.threat_level.value.upper()} threat detected",
+            message=(
+                f"{result.source_type} source produced a {result.risk_score:.0f}/100 risk score "
+                f"and was {'blocked' if result.blocked else 'flagged for review'}."
+            ),
+            threat_level=result.threat_level.value,
+        )
+        db.add(notification)
+        db.commit()
     return scan
 
 
@@ -43,6 +56,7 @@ def scan_to_response(scan: Scan) -> ScanResponse:
     return ScanResponse(
         id=scan.id,
         risk_score=scan.risk_score,
+        threat_level=threat_level_for_score(scan.risk_score),
         classification=scan.classification,
         findings=findings,
         sanitized_content=scan.sanitized_content or "",

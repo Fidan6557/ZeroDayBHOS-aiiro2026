@@ -1,3 +1,3 @@
-from app.models.scan import Scan
+from app.models.scan import Notification, Scan
 
-__all__ = ["Scan"]
+__all__ = ["Notification", "Scan"]

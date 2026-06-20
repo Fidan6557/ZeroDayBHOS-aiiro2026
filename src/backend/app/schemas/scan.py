@@ -21,6 +21,12 @@ class Classification(str, Enum):
     MALICIOUS = "malicious"
 
 
+class ThreatLevel(str, Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
 class Finding(BaseModel):
     category: ThreatCategory
     severity: str
@@ -55,6 +61,7 @@ class SimulateRequest(BaseModel):
 class ScanResponse(BaseModel):
     id: Optional[int] = None
     risk_score: float
+    threat_level: ThreatLevel
     classification: Classification
     findings: list[Finding]
     sanitized_content: str
@@ -68,6 +75,7 @@ class ScanResponse(BaseModel):
 class InspectResponse(BaseModel):
     safe: bool
     risk_score: float
+    threat_level: ThreatLevel
     classification: Classification
     block: bool
     sanitized_content: str
@@ -83,12 +91,14 @@ class StatsResponse(BaseModel):
     categories: dict[str, int]
     sources: dict[str, int]
     recent_threats: int
+    unread_notifications: int
 
 
 class ScanListItem(BaseModel):
     id: int
     source_type: str
     risk_score: float
+    threat_level: ThreatLevel
     classification: str
     blocked: bool
     original_preview: str
@@ -107,3 +117,27 @@ class SimulateResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     llm_available: bool
+
+
+class NotificationResponse(BaseModel):
+    id: int
+    scan_id: int
+    title: str
+    message: str
+    threat_level: ThreatLevel
+    is_read: bool
+    created_at: str
+
+
+class IncidentReportResponse(BaseModel):
+    scan_id: int
+    title: str
+    generated_at: str
+    source_type: str
+    threat_level: ThreatLevel
+    risk_score: float
+    classification: str
+    blocked: bool
+    summary: str
+    findings: list[Finding]
+    recommended_actions: list[str]

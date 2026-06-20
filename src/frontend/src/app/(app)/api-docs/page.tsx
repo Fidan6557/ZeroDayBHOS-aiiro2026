@@ -59,6 +59,8 @@ export default function ApiDocsPage() {
             <li><span className="text-cyan-400">GET</span> /api/v1/stats — Dashboard statistics</li>
             <li><span className="text-cyan-400">GET</span> /api/v1/scenarios — Attack simulation presets</li>
             <li><span className="text-cyan-400">POST</span> /api/v1/simulate — Run attack simulation</li>
+            <li><span className="text-cyan-400">GET</span> /api/v1/notifications — Administrator threat notifications</li>
+            <li><span className="text-cyan-400">GET</span> /api/v1/reports/:scan_id — Generate an incident report</li>
           </ul>
         </Section>
 

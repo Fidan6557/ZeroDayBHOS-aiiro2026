@@ -1,12 +1,13 @@
 import json
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.scan import Scan
+from app.engine.risk_engine import threat_level_for_score
+from app.models.scan import Notification, Scan
 from app.schemas.scan import ScanListItem, StatsResponse
 
 router = APIRouter(prefix="/api/v1", tags=["stats"])
@@ -18,8 +19,9 @@ def get_stats(db: Session = Depends(get_db)):
     threats = db.query(func.count(Scan.id)).filter(Scan.risk_score > 30).scalar() or 0
     avg = db.query(func.avg(Scan.risk_score)).scalar() or 0.0
     blocked = db.query(func.count(Scan.id)).filter(Scan.blocked == True).scalar() or 0
-    week_ago = datetime.utcnow() - timedelta(days=7)
+    week_ago = datetime.now(UTC).replace(tzinfo=None) - timedelta(days=7)
     recent = db.query(func.count(Scan.id)).filter(Scan.created_at >= week_ago, Scan.risk_score > 30).scalar() or 0
+    unread = db.query(func.count(Notification.id)).filter(Notification.is_read == False).scalar() or 0
 
     categories: dict[str, int] = {}
     sources: dict[str, int] = {}
@@ -42,6 +44,7 @@ def get_stats(db: Session = Depends(get_db)):
         categories=categories,
         sources=sources,
         recent_threats=recent,
+        unread_notifications=unread,
     )
 
 
@@ -63,6 +66,7 @@ def list_scans(
                 id=s.id,
                 source_type=s.source_type,
                 risk_score=s.risk_score,
+                threat_level=threat_level_for_score(s.risk_score),
                 classification=s.classification,
                 blocked=s.blocked,
                 original_preview=s.original_preview,

@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import Base, engine
-from app.routers import health, scan, simulate, stats
+from app.routers import health, incidents, scan, simulate, stats
 
 
 @asynccontextmanager
@@ -41,3 +41,4 @@ app.include_router(health.router)
 app.include_router(scan.router)
 app.include_router(stats.router)
 app.include_router(simulate.router)
+app.include_router(incidents.router)

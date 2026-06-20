@@ -16,3 +16,9 @@ export function riskColor(score: number) {
   if (score > 30) return "text-amber-400";
   return "text-emerald-400";
 }
+
+export function threatLevelColor(level: string) {
+  if (level === "high") return "text-red-400 bg-red-500/10 border-red-500/30";
+  if (level === "medium") return "text-amber-400 bg-amber-500/10 border-amber-500/30";
+  return "text-emerald-400 bg-emerald-500/10 border-emerald-500/30";
+}

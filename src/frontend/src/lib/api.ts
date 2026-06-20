@@ -12,6 +12,7 @@ export interface Finding {
 export interface ScanResult {
   id?: number;
   risk_score: number;
+  threat_level: "low" | "medium" | "high";
   classification: string;
   findings: Finding[];
   sanitized_content: string;
@@ -30,12 +31,14 @@ export interface Stats {
   categories: Record<string, number>;
   sources: Record<string, number>;
   recent_threats: number;
+  unread_notifications: number;
 }
 
 export interface ScanListItem {
   id: number;
   source_type: string;
   risk_score: number;
+  threat_level: "low" | "medium" | "high";
   classification: string;
   blocked: boolean;
   original_preview: string;
@@ -56,6 +59,30 @@ export interface SimulateResult {
   steps: string[];
   scan: ScanResult;
   timeline: { step: number; label: string; status: string }[];
+}
+
+export interface Notification {
+  id: number;
+  scan_id: number;
+  title: string;
+  message: string;
+  threat_level: "low" | "medium" | "high";
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface IncidentReport {
+  scan_id: number;
+  title: string;
+  generated_at: string;
+  source_type: string;
+  threat_level: "low" | "medium" | "high";
+  risk_score: number;
+  classification: string;
+  blocked: boolean;
+  summary: string;
+  findings: Finding[];
+  recommended_actions: string[];
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -81,6 +108,10 @@ export const api = {
   health: () => request<{ status: string; llm_available: boolean }>("/api/v1/health"),
   stats: () => request<Stats>("/api/v1/stats"),
   scans: (limit = 20) => request<ScanListItem[]>(`/api/v1/scans?limit=${limit}`),
+  notifications: (limit = 10) => request<Notification[]>(`/api/v1/notifications?limit=${limit}`),
+  markNotificationRead: (id: number) =>
+    request<Notification>(`/api/v1/notifications/${id}/read`, { method: "PATCH" }),
+  incidentReport: (scanId: number) => request<IncidentReport>(`/api/v1/reports/${scanId}`),
   scanText: (content: string, source_type = "text") =>
     request<ScanResult>("/api/v1/scan", {
       method: "POST",

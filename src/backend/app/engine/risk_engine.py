@@ -1,4 +1,4 @@
-from app.schemas.scan import Classification, Finding, ThreatCategory
+from app.schemas.scan import Classification, Finding, ThreatCategory, ThreatLevel
 
 CATEGORY_WEIGHTS = {
     ThreatCategory.PROMPT_INJECTION: 40,
@@ -12,9 +12,17 @@ CATEGORY_WEIGHTS = {
 }
 
 
-def compute_risk(findings: list[Finding]) -> tuple[float, Classification, bool]:
+def threat_level_for_score(risk_score: float) -> ThreatLevel:
+    if risk_score <= 30:
+        return ThreatLevel.LOW
+    if risk_score <= 60:
+        return ThreatLevel.MEDIUM
+    return ThreatLevel.HIGH
+
+
+def compute_risk(findings: list[Finding]) -> tuple[float, ThreatLevel, Classification, bool]:
     if not findings:
-        return 0.0, Classification.SAFE, False
+        return 0.0, ThreatLevel.LOW, Classification.SAFE, False
 
     category_scores: dict[ThreatCategory, int] = {}
     for f in findings:
@@ -24,15 +32,24 @@ def compute_risk(findings: list[Finding]) -> tuple[float, Classification, bool]:
 
     total = sum(category_scores.values())
     risk_score = min(100.0, float(total))
+    threat_level = threat_level_for_score(risk_score)
 
-    if risk_score <= 30:
-        classification = Classification.SAFE
-        blocked = False
-    elif risk_score <= 60:
-        classification = Classification.SUSPICIOUS
-        blocked = False
-    else:
+    high_impact_categories = {
+        ThreatCategory.PROMPT_INJECTION,
+        ThreatCategory.INDIRECT_INJECTION,
+        ThreatCategory.DATA_EXFILTRATION,
+        ThreatCategory.TOOL_ABUSE,
+        ThreatCategory.MEMORY_EXTRACTION,
+        ThreatCategory.JAILBREAK,
+    }
+    high_impact_detected = any(f.category in high_impact_categories for f in findings)
+    blocked = risk_score > 60 or (risk_score >= 35 and high_impact_detected)
+
+    if blocked:
         classification = Classification.MALICIOUS
-        blocked = True
+    elif risk_score <= 30:
+        classification = Classification.SAFE
+    else:
+        classification = Classification.SUSPICIOUS
 
-    return risk_score, classification, blocked
+    return risk_score, threat_level, classification, blocked

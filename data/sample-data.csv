@@ -7,3 +7,6 @@ jailbreak,Jailbreak Attempt,web,jailbreak,high
 tool-abuse,Tool Abuse Chain,discord,tool_abuse,high
 normal-email,Normal Email,email,safe,low
 support-ticket,Support Ticket,support_ticket,safe,low
+traffic-control-injection,Traffic Control Prompt Injection,smart_city_log,prompt_injection,high
+parking-api-exfil,Parking API Credential Exfiltration,smart_city_log,data_exfiltration,high
+citizen-portal-safe,Citizen Portal Status Update,smart_city_log,safe,low

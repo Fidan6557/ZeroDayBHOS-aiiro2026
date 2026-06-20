@@ -16,6 +16,7 @@ interface ShieldDashboardProps {
 export default function ShieldDashboard({ state, scanResult, onMinimize, onClose }: ShieldDashboardProps) {
   const isAttack = state === SimulationState.SHIELD_INTERVENTION || state === SimulationState.RESOLVED;
   const isResolved = state === SimulationState.RESOLVED;
+  const wasBlocked = scanResult?.blocked === true;
   let glowState: "none" | "green" | "red" = "green";
   if (state === SimulationState.SHIELD_INTERVENTION) glowState = "red";
 
@@ -41,7 +42,7 @@ export default function ShieldDashboard({ state, scanResult, onMinimize, onClose
           </div>
           <div className={`px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-2 border ${isAttack && !isResolved ? "bg-red-500/20 text-red-400 border-red-500/50" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"}`}>
             <div className={`w-2 h-2 rounded-full ${isAttack && !isResolved ? "bg-red-500 animate-ping" : "bg-emerald-500"}`} />
-            {isAttack && !isResolved ? "THREAT DETECTED" : "SYSTEM SECURE"}
+            {isAttack && !isResolved ? "THREAT DETECTED" : isResolved && scanResult && !wasBlocked ? "REVIEW REQUIRED" : "SYSTEM SECURE"}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 z-10 mb-6">
@@ -77,7 +78,9 @@ export default function ShieldDashboard({ state, scanResult, onMinimize, onClose
                           <div><span className="opacity-50">Target:</span> Unauthorized Data Exfiltration</div>
                         </>
                       )}
-                      <div className="mt-2 text-red-400 font-bold bg-red-500/20 px-2 py-1 inline-block rounded">ACTION: EXECUTION BLOCKED</div>
+                      <div className={`mt-2 font-bold px-2 py-1 inline-block rounded ${wasBlocked ? "text-red-400 bg-red-500/20" : "text-amber-400 bg-amber-500/20"}`}>
+                        ACTION: {wasBlocked ? "EXECUTION BLOCKED" : "FLAGGED FOR ADMIN REVIEW"}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -85,8 +88,11 @@ export default function ShieldDashboard({ state, scanResult, onMinimize, onClose
             </AnimatePresence>
             {isResolved && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-                <LogLine text="Threat neutralized. Agent context cleared." color="text-emerald-400" />
-                <LogLine text="Report generated and sent to admin(s)." />
+                <LogLine
+                  text={wasBlocked ? "Threat neutralized. Agent context cleared." : "Content retained for administrator review."}
+                  color={wasBlocked ? "text-emerald-400" : "text-amber-400"}
+                />
+                <LogLine text="Incident report generated and administrator notification created." />
               </motion.div>
             )}
           </div>

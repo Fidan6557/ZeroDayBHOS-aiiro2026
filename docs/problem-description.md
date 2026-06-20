@@ -2,7 +2,7 @@
 
 ## Context
 
-Organizations are deploying autonomous AI agents that connect to email, Slack, Telegram, CRM systems, knowledge bases, and document stores. These agents process unstructured text from untrusted sources.
+Smart-city organizations are deploying autonomous AI agents that connect to traffic management, parking, citizen portals, email, messaging systems, knowledge bases, and document stores. These agents process unstructured text from untrusted sources.
 
 ## The Threat
 
@@ -41,3 +41,4 @@ The system detects and blocks prompt injection, indirect injection, AI phishing,
 - Companies deploying AI agents
 - Security teams monitoring agent behavior
 - Developers integrating OpenClaw and similar agent frameworks
+- Smart-city operations teams protecting connected municipal services

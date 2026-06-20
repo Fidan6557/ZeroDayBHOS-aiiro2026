@@ -45,11 +45,25 @@ export default function Terminal({ state, scanResult, onMinimize, onClose }: Ter
       scanResult?.findings.slice(0, 2).forEach((f, i) => {
         logs.push({ id: `f${i}`, time: "12:45:15", text: `[AgentShield] ${f.category}: ${f.explanation}`, color: "text-red-400" });
       });
-      logs.push({ id: "9", time: "12:45:15", text: "[FATAL ERROR] AgentShield Intercept: Action Blocked!", color: "text-red-500 font-bold bg-red-500/20 px-2 rounded" });
+      logs.push({
+        id: "9",
+        time: "12:45:15",
+        text: scanResult?.blocked
+          ? "[FATAL ERROR] AgentShield Intercept: Action Blocked!"
+          : "[WARNING] AgentShield: Activity flagged for administrator review.",
+        color: scanResult?.blocked ? "text-red-500 font-bold bg-red-500/20 px-2 rounded" : "text-yellow-400 font-bold",
+      });
     }
 
     if (state === SimulationState.RESOLVED) {
-      logs.push({ id: "10", time: "12:45:16", text: `[OpenClaw] Task aborted. Risk score: ${scanResult?.risk_score ?? "—"}`, color: "text-green-400" });
+      logs.push({
+        id: "10",
+        time: "12:45:16",
+        text: scanResult?.blocked
+          ? `[OpenClaw] Task aborted. Risk score: ${scanResult.risk_score}`
+          : `[AgentShield] Review requested. Risk score: ${scanResult?.risk_score ?? "—"}`,
+        color: scanResult?.blocked ? "text-green-400" : "text-yellow-400",
+      });
       logs.push({ id: "11", time: "12:45:17", text: "[OpenClaw] Awaiting new task..." });
     }
 

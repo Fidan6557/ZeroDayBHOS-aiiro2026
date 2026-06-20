@@ -76,6 +76,7 @@ async def inspect(req: InspectRequest, db: Session = Depends(get_db)):
     return InspectResponse(
         safe=result.classification.value == "safe",
         risk_score=result.risk_score,
+        threat_level=result.threat_level,
         classification=result.classification,
         block=result.blocked,
         sanitized_content=result.sanitized_content,

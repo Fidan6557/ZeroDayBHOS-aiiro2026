@@ -65,7 +65,7 @@ export default function ScanPage() {
     <div className="p-8 max-w-5xl">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white">Content Scanner</h1>
-        <p className="text-slate-500 text-sm mt-1">Analyze text, files, or URLs for AI agent threats</p>
+        <p className="text-slate-500 text-sm mt-1">Analyze smart-city logs, messages, files, or URLs for AI agent threats</p>
       </header>
 
       <div className="glass-card rounded-xl p-6 mb-6">
@@ -88,7 +88,7 @@ export default function ScanPage() {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Paste content to scan for prompt injection, data exfiltration, tool abuse..."
+            placeholder="Paste a smart-city system log or message to scan for prompt injection, data exfiltration, or tool abuse..."
             className="w-full h-40 bg-black/30 border border-shield-border rounded-lg p-4 text-sm font-mono text-slate-300 resize-none focus:outline-none focus:border-cyan-500/50"
           />
         )}

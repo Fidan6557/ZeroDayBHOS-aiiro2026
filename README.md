@@ -23,6 +23,10 @@ AgentShield is a universal AI Content Firewall that analyzes all incoming conten
 - Content scanner (text, PDF, DOCX, URL)
 - Attack simulation with real detection pipeline
 - Security dashboard with threat analytics
+- Low / medium / high threat levels
+- Live dashboard refresh and administrator notifications
+- Automatic incident report generation
+- Smart-city system log samples
 
 ## Texnologiya steki:
 - **Backend:** FastAPI, Python 3.12, SQLAlchemy, SQLite
@@ -58,7 +62,7 @@ npm run dev
 No login required. Optional: set `GROQ_API_KEY` in `.env` for LLM layer.
 
 ## Nümunə data:
-See `data/sample-attacks.json` and `data/sample-safe.json`
+See `data/sample-attacks.json`, `data/sample-safe.json`, and `data/smart-city-logs.json`.
 
 Test inspect endpoint:
 ```bash

@@ -42,12 +42,13 @@ async def run_pipeline(content: str, source_type: str = "text") -> ScanResponse:
     if not layers_used:
         layers_used = ["regex"]
 
-    risk_score, classification, blocked = compute_risk(all_findings)
+    risk_score, threat_level, classification, blocked = compute_risk(all_findings)
     sanitized, removed = sanitize_content(content, all_findings)
     preview = content[:200] + ("..." if len(content) > 200 else "")
 
     return ScanResponse(
         risk_score=risk_score,
+        threat_level=threat_level,
         classification=classification,
         findings=all_findings,
         sanitized_content=sanitized,

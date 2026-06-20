@@ -1,10 +1,13 @@
 import json
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
+from app.database import get_db
 from app.engine.pipeline import run_pipeline
 from app.paths import get_data_dir
 from app.schemas.scan import SimulateRequest, SimulateResponse
+from app.services.scan_service import save_scan
 
 router = APIRouter(prefix="/api/v1", tags=["simulate"])
 
@@ -23,13 +26,15 @@ def list_scenarios():
 
 
 @router.post("/simulate", response_model=SimulateResponse)
-async def simulate(req: SimulateRequest):
+async def simulate(req: SimulateRequest, db: Session = Depends(get_db)):
     scenarios = load_scenarios()
     scenario = next((s for s in scenarios if s["id"] == req.scenario_id), None)
     if not scenario:
         raise HTTPException(404, f"Scenario '{req.scenario_id}' not found")
 
     result = await run_pipeline(scenario["content"], scenario["source_type"])
+    scan = save_scan(db, result, scenario["content"], agent_id="smart-city-demo")
+    result.id = scan.id
     timeline = []
     for i, step in enumerate(scenario["steps"]):
         entry = {"step": i + 1, "label": step, "status": "pending"}

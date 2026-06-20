@@ -42,7 +42,9 @@ export default function Desktop() {
     setWindows((prev) => ({ ...prev, [id]: { ...prev[id], closed: true } }));
   };
 
-  const startSimulation = () => {
+  const wait = (milliseconds: number) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+  const startSimulation = async () => {
     if (isSimulating) return;
     setIsSimulating(true);
     setState(SimulationState.IDLE);
@@ -55,25 +57,27 @@ export default function Desktop() {
       dashboard: prev.dashboard,
     }));
 
-    setTimeout(() => {
-      setState(SimulationState.ATTACK_INITIATED);
-      setTimeout(() => {
-        setState(SimulationState.EMAIL_OPENED);
-        setTimeout(() => {
-          setState(SimulationState.AGENT_PROCESSING);
-          api.simulate("email-exfil").then((res) => {
-            setScanResult(res.scan);
-          }).catch(() => {});
-          setTimeout(() => {
-            setState(SimulationState.SHIELD_INTERVENTION);
-            setTimeout(() => {
-              setState(SimulationState.RESOLVED);
-              setIsSimulating(false);
-            }, 2500);
-          }, 2000);
-        }, 1500);
-      }, 1000);
-    }, 500);
+    await wait(500);
+    setState(SimulationState.ATTACK_INITIATED);
+    await wait(1000);
+    setState(SimulationState.EMAIL_OPENED);
+    await wait(1500);
+    setState(SimulationState.AGENT_PROCESSING);
+
+    try {
+      const res = await api.simulate("email-exfil");
+      setScanResult(res.scan);
+      await wait(1200);
+      if (res.scan.blocked) {
+        setState(SimulationState.SHIELD_INTERVENTION);
+        await wait(2500);
+      }
+      setState(SimulationState.RESOLVED);
+    } catch {
+      setState(SimulationState.RESOLVED);
+    } finally {
+      setIsSimulating(false);
+    }
   };
 
   return (
