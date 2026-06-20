@@ -1,0 +1,8 @@
+{
+  "name": "AI Agent Security Shield Demo",
+  "description": "Simulation of a prompt injection attack on an AI agent and prevention by a security shield plugin.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
